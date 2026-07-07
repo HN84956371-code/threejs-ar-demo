@@ -3,6 +3,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // ── 常數 ──────────────────────────────────────────────
 const GAME_DURATION = 60;          // 秒
@@ -37,10 +38,19 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.xr.enabled = true;
 document.body.prepend(renderer.domElement);
 
-scene.add(new THREE.HemisphereLight(0xf1f5f9, 0x1a1e2e, 1.2));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+scene.add(new THREE.HemisphereLight(0xf1f5f9, 0x1a1e2e, 1.8));
+const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
 dirLight.position.set(2, 4, 1);
 scene.add(dirLight);
+// 正面補光：深色資產（如骷髏騎士）在深色背景下的可見度
+const fillLight = new THREE.DirectionalLight(0xbfd4ff, 1.6);
+fillLight.position.set(0, 1.6, 5);
+scene.add(fillLight);
+
+// IBL 環境光照：PBR 金屬材質（AI 生成 GLB 常見）沒有環境貼圖會近乎全黑
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 1.2;
 
 // 螢幕模式場地：地面網格（深度提示）
 const grid = new THREE.GridHelper(20, 20, 0x4ADE80, 0x1A1E2E);
@@ -133,7 +143,7 @@ function spawnMonster(now) {
   if (!monsterProto) return;
   const m = monsterProto.clone(true);
   const isAR = state.mode === 'ar';
-  const s = isAR ? 0.18 : 0.7 + Math.random() * 0.3;
+  const s = isAR ? 0.32 : 1.5 + Math.random() * 0.6;
   m.scale.setScalar(0.001); // 彈跳進場起點
   m.userData.targetScale = s;
 
@@ -144,7 +154,7 @@ function spawnMonster(now) {
     m.position.set(Math.cos(a) * r, 0.1 + Math.random() * 0.35, Math.sin(a) * r);
   } else {
     // 相機前方扇形區
-    m.position.set((Math.random() - 0.5) * 5, 0.6 + Math.random() * 1.8, -3 - Math.random() * 3);
+    m.position.set((Math.random() - 0.5) * 4, 0.7 + Math.random() * 1.5, -2.5 - Math.random() * 2);
   }
   m.userData.baseY = m.position.y;
   m.userData.phase = Math.random() * Math.PI * 2;
