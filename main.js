@@ -405,8 +405,6 @@ function tick(timestamp, frame) {
     // 閒置漂浮
     m.position.y = m.userData.baseY + Math.sin(now / 500 + m.userData.phase) * 0.05 * (state.mode === 'ar' ? 0.5 : 1);
     m.rotation.y = Math.sin(now / 800 + m.userData.phase) * 0.3;
-    // 面向相機（螢幕模式）
-    if (state.mode === 'screen') m.rotation.y += 0;
   }
 
   renderer.render(scene, camera);
