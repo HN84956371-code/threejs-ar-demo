@@ -313,6 +313,8 @@ async function enterAR() {
     $('ar-unsupported').classList.remove('hidden');
     return;
   }
+  // end 監聽必須在任何 await 之前掛上，session 中途被系統結束才能還原狀態
+  xrSession.addEventListener('end', onARSessionEnd);
   state.mode = 'ar';
   state.arPlaced = false;
   state.playing = false;
@@ -320,16 +322,24 @@ async function enterAR() {
   scene.background = null; // 透出鏡頭畫面
   scene.fog = null;
   grid.visible = false;
+  // dom-overlay 的 root 是 body，深色背景會蓋住鏡頭畫面
+  document.documentElement.classList.add('ar-active');
+  document.body.classList.add('ar-active');
   startOverlay.classList.add('hidden');
   endOverlay.classList.add('hidden');
   hud.classList.add('hidden');
   arHint.classList.remove('hidden');
   arExitBtn.classList.remove('hidden');
 
-  const viewerSpace = await xrSession.requestReferenceSpace('viewer');
-  hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
-  xrSession.addEventListener('end', onARSessionEnd);
-  await renderer.xr.setSession(xrSession);
+  try {
+    const viewerSpace = await xrSession.requestReferenceSpace('viewer');
+    hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
+    await renderer.xr.setSession(xrSession);
+  } catch (err) {
+    $('ar-unsupported').textContent = 'AR 啟動失敗：' + err.message;
+    $('ar-unsupported').classList.remove('hidden');
+    xrSession?.end().catch(() => {}); // end 事件觸發 onARSessionEnd 還原狀態；?. 防系統中斷競態下已被置 null
+  }
 }
 
 function onARSessionEnd() {
@@ -346,6 +356,8 @@ function onARSessionEnd() {
   scene.background = new THREE.Color(0x0D0F1A);
   scene.fog = new THREE.Fog(0x0D0F1A, 8, 16);
   grid.visible = true;
+  document.documentElement.classList.remove('ar-active');
+  document.body.classList.remove('ar-active');
   reticle.visible = false;
   arHint.classList.add('hidden');
   arExitBtn.classList.add('hidden');
@@ -355,6 +367,11 @@ function onARSessionEnd() {
 }
 
 arExitBtn.addEventListener('click', () => xrSession?.end());
+
+// dom-overlay 已知坑：點 DOM 按鈕會同時誤發 controller select
+document.body.addEventListener('beforexrselect', (e) => {
+  if (e.target.closest('button')) e.preventDefault();
+});
 
 // ── 主迴圈 ────────────────────────────────────────────
 function tick(timestamp, frame) {

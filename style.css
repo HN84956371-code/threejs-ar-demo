@@ -25,6 +25,10 @@ html, body {
 
 canvas { display: block; }
 
+/* AR dom-overlay：session 期間 body 疊在鏡頭畫面上，必須透明才透得出相機 */
+html.ar-active, body.ar-active { background: transparent; }
+body:xr-overlay { background: transparent; }
+
 .hidden { display: none !important; }
 
 /* ── 覆蓋層 ── */
