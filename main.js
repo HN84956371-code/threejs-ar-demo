@@ -158,6 +158,8 @@ function spawnMonster(now) {
   }
   m.userData.baseY = m.position.y;
   m.userData.phase = Math.random() * Math.PI * 2;
+  // 基準朝向：正/背/左/右四方位隨機，再加少許偏差更自然
+  m.userData.baseYaw = Math.floor(Math.random() * 4) * (Math.PI / 2) + (Math.random() - 0.5) * 0.4;
   monsterRoot.add(m);
   monsters.push({ obj: m, bornAt: now, dieAt: now + MONSTER_LIFETIME, caught: false });
 }
@@ -436,7 +438,7 @@ function tick(timestamp, frame) {
     }
     // 閒置漂浮
     m.position.y = m.userData.baseY + Math.sin(now / 500 + m.userData.phase) * 0.05 * (state.mode === 'ar' ? 0.5 : 1);
-    m.rotation.y = Math.sin(now / 800 + m.userData.phase) * 0.3;
+    m.rotation.y = (m.userData.baseYaw || 0) + Math.sin(now / 800 + m.userData.phase) * 0.3;
   }
 
   renderer.render(scene, camera);
