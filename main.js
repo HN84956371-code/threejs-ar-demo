@@ -332,11 +332,13 @@ async function enterAR() {
   arExitBtn.classList.remove('hidden');
 
   try {
+    // three.js 預設 reference space 是 local-floor，immersive-ar 未申請該 feature 會被拒；AR 一律用 local
+    renderer.xr.setReferenceSpaceType('local');
     const viewerSpace = await xrSession.requestReferenceSpace('viewer');
     hitTestSource = await xrSession.requestHitTestSource({ space: viewerSpace });
     await renderer.xr.setSession(xrSession);
   } catch (err) {
-    $('ar-unsupported').textContent = 'AR 啟動失敗：' + err.message;
+    $('ar-unsupported').textContent = 'AR 啟動失敗：' + (err.name || '') + ' ' + err.message;
     $('ar-unsupported').classList.remove('hidden');
     xrSession?.end().catch(() => {}); // end 事件觸發 onARSessionEnd 還原狀態；?. 防系統中斷競態下已被置 null
   }
@@ -356,6 +358,9 @@ function onARSessionEnd() {
   scene.background = new THREE.Color(0x0D0F1A);
   scene.fog = new THREE.Fog(0x0D0F1A, 8, 16);
   grid.visible = true;
+  // XR 期間 three 每幀把頭部 pose 寫進 camera，退出後須還原桌面視角
+  camera.position.set(0, 1.6, 0);
+  camera.quaternion.identity();
   document.documentElement.classList.remove('ar-active');
   document.body.classList.remove('ar-active');
   reticle.visible = false;
