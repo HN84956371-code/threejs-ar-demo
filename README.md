@@ -2,6 +2,8 @@
 
 拿案展示品：**傳連結即玩、零安裝**。展示「雲端 AI 生成 3D 資產 → 瀏覽器互動遊戲 → 手機掃碼 AR」完整工作流。
 
+**正式網址：https://monster-catch.pages.dev/**（Cloudflare Pages；QR code＝`QR掃碼即玩_新網域.png`）
+
 ## 玩法
 
 點擊小怪獸得分，60 秒內抓越多越好。連續命中有 Combo。
