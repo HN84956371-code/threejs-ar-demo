@@ -12,7 +12,7 @@
 
 - **three.js r172**（本地 vendor，不依賴 CDN）
 - **WebXR immersive-ar + hit-test**：Android Chrome 掃碼進 AR，把遊戲放進現實空間
-- **3D 資產**：Meshy 雲端 AI 生成（`assets/monster.glb`，未到位時自動 fallback 程序化佔位怪獸）
+- **3D 資產**：雲端 AI 生成（Microsoft TRELLIS.2，`assets/monster.glb`；未到位時自動 fallback 程序化佔位模型）
 - 純靜態網頁，無 build step，任何靜態主機可部署
 
 ## 部署需知
@@ -29,7 +29,7 @@
 | iPhone Safari | ✅ | ❌ iOS 不支援 WebXR（顯示提示，現場改用 Android 機演示） |
 | 舊瀏覽器（不支援 import map） | ❌ 顯示升級提示 | ❌ |
 
-## 替換 Meshy 資產
+## 替換 3D 資產
 
 把 GLB 放到 `assets/monster.glb` 即自動載入（會自動正規化尺寸與置中）；同時把 `index.html` 的「示意版」小字移除。
 

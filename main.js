@@ -1,5 +1,5 @@
 // 煚煚抓壞蛋 — three.js 點擊收集小遊戲 + WebXR AR
-// 資產策略：優先載入 assets/monster.glb（Meshy 生成），不存在則用程序化幾何佔位怪獸
+// 資產策略：優先載入 assets/monster.glb（TRELLIS.2 生成），不存在則用程序化幾何佔位怪獸
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
