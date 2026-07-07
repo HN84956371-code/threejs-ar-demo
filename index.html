@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>怪獸快抓！— three.js + WebXR AR Demo</title>
+  <meta name="description" content="雲端 AI 生成 3D 資產 × three.js × WebXR 手機 AR 小遊戲，免安裝 App，掃碼即玩。">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.min.js",
+      "three/addons/": "./vendor/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- three.js canvas 由 main.js 注入 -->
+
+  <!-- 開始畫面 -->
+  <div id="start-overlay" class="overlay">
+    <div class="card">
+      <h1 class="title">怪獸快抓！</h1>
+      <p class="desc">點擊小怪獸得分，60 秒內抓越多越好！</p>
+      <button id="btn-start" class="btn btn-primary">開始遊戲</button>
+      <button id="btn-ar" class="btn btn-secondary hidden">AR 模式 📱</button>
+      <p id="ar-unsupported" class="note hidden">AR 模式需要 Android Chrome。iPhone 請先玩 3D 版，AR 版可現場用 Android 機演示。</p>
+      <p class="footer-note">雲端 AI 生成 3D 資產 × three.js × WebXR｜免安裝 App</p>
+      <p id="placeholder-note" class="footer-note">3D 角色由雲端 AI 生成（示意版）</p>
+    </div>
+  </div>
+
+  <!-- 遊戲 HUD -->
+  <div id="hud" class="hidden">
+    <div class="badge badge-score">⭐ <span id="score">0</span></div>
+    <div class="badge badge-timer" id="timer-badge">⏱ <span id="timer">60</span></div>
+  </div>
+
+  <!-- 結束畫面 -->
+  <div id="end-overlay" class="overlay hidden">
+    <div class="card">
+      <h2 class="title">時間到！</h2>
+      <p class="final-score" id="final-score">0</p>
+      <p class="desc">歷史最佳：<span id="best-score">0</span></p>
+      <button id="btn-restart" class="btn btn-primary">再玩一次</button>
+      <button id="btn-ar-end" class="btn btn-secondary hidden">AR 模式 📱</button>
+      <p class="footer-note">把這個連結傳給朋友挑戰！</p>
+    </div>
+  </div>
+
+  <!-- AR 引導提示 -->
+  <div id="ar-hint" class="ar-banner hidden">對準地面移動手機，點擊放置遊戲場地</div>
+  <button id="btn-ar-exit" class="ar-exit hidden" aria-label="退出 AR">✕</button>
+
+  <!-- 舊瀏覽器（不支援 import map）白屏防護 -->
+  <div id="compat-warning" class="overlay hidden">
+    <div class="card">
+      <h2 class="title">瀏覽器版本過舊</h2>
+      <p class="desc">這個 Demo 需要較新的瀏覽器。請更新 Chrome / Safari，或改用手機內建瀏覽器（非 App 內開啟）再試一次。</p>
+    </div>
+  </div>
+  <script>
+    if (!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('importmap'))) {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('start-overlay').classList.add('hidden');
+        document.getElementById('compat-warning').classList.remove('hidden');
+      });
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

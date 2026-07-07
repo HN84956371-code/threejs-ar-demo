@@ -1,0 +1,212 @@
+/* DESIGN.md tokens — 深色遊戲風 Dark Arcade */
+:root {
+  --bg: #0D0F1A;
+  --surface: #1A1E2E;
+  --primary: #4ADE80;
+  --secondary: #A78BFA;
+  --accent: #FB923C;
+  --text: #F1F5F9;
+  --text-dim: #94A3B8;
+  --danger: #F87171;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+canvas { display: block; }
+
+.hidden { display: none !important; }
+
+/* ── 覆蓋層 ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 10;
+  animation: overlay-in 250ms ease-out;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: rgba(26, 30, 46, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(241, 245, 249, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding: 32px 28px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+
+.final-score {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+}
+
+/* ── 按鈕 ── */
+.btn {
+  display: block;
+  width: 100%;
+  min-width: 240px;
+  min-height: 48px;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--primary);
+  color: #0D0F1A;
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.35);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: #0D0F1A;
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.35);
+}
+
+.note {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.footer-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+/* ── HUD ── */
+#hud {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.badge {
+  background: rgba(26, 30, 46, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-score { color: var(--primary); }
+.badge-timer { color: var(--text); }
+
+.badge-timer.warning {
+  color: var(--accent);
+  animation: pulse 800ms ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* ── 點擊浮字 ── */
+.float-text {
+  position: fixed;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--primary);
+  pointer-events: none;
+  z-index: 6;
+  animation: float-up 600ms ease-out forwards;
+}
+
+.float-text.combo { color: var(--accent); }
+
+@keyframes float-up {
+  from { opacity: 1; transform: translate(-50%, 0); }
+  to   { opacity: 0; transform: translate(-50%, -48px); }
+}
+
+/* ── AR ── */
+.ar-banner {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 30, 46, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-size: 15px;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+.ar-exit {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(26, 30, 46, 0.72);
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 21;
+}
+
+/* ── 減少動效 ── */
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .float-text, .badge-timer.warning { animation: none; }
+  .btn { transition: none; }
+}
